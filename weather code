@@ -1,0 +1,52 @@
+import tkinter as tk
+import requests
+import time
+
+# getting the weather api
+def getWeather(canvas):
+    city=text.get()
+    api="https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=4b22e0b6657c6b0b55359ca4bc2bebdd"
+    # we are accesing the data og the api using json 
+    # now we will acess the wetaher and temp using the dat ain postman
+    json_data=requests.get(api).json()
+    condition1=json_data['weather'][0]['main']
+    # we are here converting the kelvin value into celcius
+    temp=int(json_data['main']['temp']-273.15)
+    min_temp=int(json_data['main']['temp_min']-273.15)
+    max_temp=int(json_data['main']['temp_max']-273.15)
+    pressure=json_data['main']['pressure']
+    humidity=json_data['main']['humidity']
+    wind=json_data['wind']['speed']
+    # I for 12 hour fromat and H for 24 hour fromat 
+    sunrise=time.strftime("%I:%M:%S",time.gmtime(json_data['sys']['sunrise']-21600))
+    sunset=time.strftime("%H:%M:%S",time.gmtime(json_data['sys']['sunset']-21600))
+
+    # now finally we are showing current temp in large font and other in small font
+    final= condition1 + "\n" + str(temp) + "°C" 
+    final1="\n"+ "Min Temp: " + str(min_temp) + "°C" + "\n" + "Max Temp: " + str(max_temp) + "°C" +"\n" + "Pressure: " + str(pressure) + "\n" +"Humidity: " + str(humidity) + "\n" +"Wind Speed: " + str(wind) + "\n" + "Sunrise: " + sunrise + "\n" + "Sunset: " + sunset
+    Label1.config(text=final)
+    Label2.config(text=final1)
+
+canvas=tk.Tk()
+canvas.geometry("600x600")
+canvas.title("Weather App")
+
+#this is font sizes defined prior
+f=("popinis",15,"bold")
+t=("popinins",35,"bold")
+
+#here we are importing the text by using the fonts defined earlier
+# here pady is the padding 
+text=tk.Entry(canvas,justify='center',font=t)
+text.pack(pady=25)
+text.focus()
+# on every enter tap repeat the getWeather funct
+text.bind('<Return>',getWeather)
+
+#creating labels to show the data
+Label1=tk.Label(canvas,font=t)
+Label1.pack()
+Label2=tk.Label(canvas,font=f)
+Label2.pack()
+
+canvas.mainloop()
